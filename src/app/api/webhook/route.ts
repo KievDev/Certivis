@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { stripe } from "@/utils/stripe";
+import { manageSubscription } from "@/utils/manage-subscription";
 
 export const POST = async (request: Request) => {
   const signature = request.headers.get("stripe-signature");
@@ -20,10 +21,19 @@ export const POST = async (request: Request) => {
   switch (event.type) {
     case "customer.subscription.deleted":
       const payment = event.data.object as Stripe.Subscription;
+
+      await manageSubscription(
+        payment.id,
+        payment.customer.toString(),
+        false,
+        true
+      );
+
       break;
 
     case "customer.subscription.updated":
       const paymentIntent = event.data.object as Stripe.Subscription;
+
       break;
 
     case "checkout.session.completed":

@@ -2,7 +2,6 @@ import prisma from "@/lib/prisma";
 import Stripe from "stripe";
 import { stripe } from "@/utils/stripe";
 import { Plan } from "@/generated/prisma";
-import { sub } from "date-fns";
 
 /**
  * Salvar, atualizar ou deletar informações das assinaturas no banco de dados, sincronizando com a Stripe.
@@ -20,13 +19,10 @@ import { sub } from "date-fns";
 export async function manageSubscription(
   subscriptionId: string,
   customerId: string,
-  createAction: false,
-  deleteAction: false,
+  createAction: boolean,
+  deleteAction: boolean,
   type?: Plan
 ) {
-  // Buscar do banco de dados o usuário com esse customerId
-  // Salvar os dados da assinatura feita no banco
-
   const findUser = await prisma.user.findFirst({
     where: {
       stripe_customer_id: customerId,
