@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { stripe } from "@/utils/stripe";
 import { manageSubscription } from "@/utils/manage-subscription";
+import { Plan } from "@/generated/prisma";
+import { revalidatePath } from "next/cache";
 
 export const POST = async (request: Request) => {
   const signature = request.headers.get("stripe-signature");
@@ -34,10 +36,32 @@ export const POST = async (request: Request) => {
     case "customer.subscription.updated":
       const paymentIntent = event.data.object as Stripe.Subscription;
 
+      await manageSubscription(
+        paymentIntent.id,
+        paymentIntent.customer.toString(),
+        false,
+        false
+      );
+      revalidatePath("/dashboard/plans");
       break;
 
     case "checkout.session.completed":
       const checkoutSession = event.data.object as Stripe.Checkout.Session;
+
+      const type = checkoutSession?.metadata?.type
+        ? checkoutSession?.metadata?.type
+        : "BASIC";
+
+      if (checkoutSession.subscription && checkoutSession.customer) {
+        await manageSubscription(
+          checkoutSession.subscription.toString(),
+          checkoutSession.customer.toString(),
+          true,
+          false,
+          type as Plan
+        );
+      }
+      revalidatePath("/dashboard/plans");
       break;
 
     default:

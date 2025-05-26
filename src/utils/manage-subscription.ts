@@ -54,6 +54,7 @@ export async function manageSubscription(
         id: subscriptionId,
       },
     });
+
     return;
   }
 
@@ -82,7 +83,6 @@ export async function manageSubscription(
         data: {
           status: subscription.status,
           priceId: subscription.items.data[0].price.id,
-          plan: type ?? "BASIC",
         },
       });
     } catch (err) {
