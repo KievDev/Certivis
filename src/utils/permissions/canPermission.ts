@@ -6,7 +6,7 @@ import prisma from "@/lib/prisma";
 
 export type PLAN_PROP = "BASIC" | "PROFESSIONAL" | "TRIAL" | "EXPIRED";
 
-interface ResultPermissionProp {
+export interface ResultPermissionProp {
   hasPermission: boolean;
   PlanId: string;
   expired: boolean;
