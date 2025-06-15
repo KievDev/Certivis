@@ -24,14 +24,21 @@ import { Service } from "@/generated/prisma";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { deleteService } from "../_actions/delete-service";
 import { toast } from "sonner";
+import { ResultPermissionProp } from "@/utils/permissions/canPermission";
+import Link from "next/link";
 
 interface ServicesListProps {
   services: Service[];
+  permission: ResultPermissionProp;
 }
 
-export function ServicesList({ services }: ServicesListProps) {
+export function ServicesList({ services, permission }: ServicesListProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
+
+  const servicesList = permission.hasPermission
+    ? services
+    : services.slice(0, 3);
 
   async function handleDeleteService(serviceId: string) {
     const response = await deleteService({ serviceId: serviceId });
@@ -66,11 +73,18 @@ export function ServicesList({ services }: ServicesListProps) {
             <CardTitle className="text-xl md:text-2xl font-bold">
               Serviços
             </CardTitle>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="w-4 h-4" />
-              </Button>
-            </DialogTrigger>
+            {permission.hasPermission && (
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </DialogTrigger>
+            )}
+            {!permission.hasPermission && (
+              <Link href="/dashboard/plans" className="text-red-500">
+                Limite de serviços atingido
+              </Link>
+            )}
             <DialogContent
               onInteractOutside={(e) => {
                 e.preventDefault();
@@ -103,7 +117,7 @@ export function ServicesList({ services }: ServicesListProps) {
           </CardHeader>
           <CardContent>
             <section className="space-y-4">
-              {services.map((service) => (
+              {servicesList.map((service) => (
                 <article
                   key={service.id}
                   className="flex items-center justify-between"
