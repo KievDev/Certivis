@@ -3,6 +3,7 @@
 import { auth } from "@/lib/auth";
 import { PlanDetailInfo } from "./get-plans";
 import prisma from "@/lib/prisma";
+import { canCreateService } from "./canCreateService";
 
 export type PLAN_PROP = "BASIC" | "PROFESSIONAL" | "TRIAL" | "EXPIRED";
 
@@ -39,12 +40,8 @@ export async function canPermission({
 
   switch (type) {
     case "service":
-      return {
-        hasPermission: false,
-        PlanId: "EXPIRED",
-        expired: true,
-        plan: null,
-      };
+      const permission = await canCreateService(subscription, session);
+
     default:
       return {
         hasPermission: false,
