@@ -29,6 +29,12 @@ export function AvatarProfile({ avatarUrl, userId }: AvatarProfileProps) {
       const newFile = new File([image], newFilename, { type: image.type });
 
       const urlImage = await uploadImage(newFile);
+
+      if (urlImage) {
+        setPreviewImage(urlImage);
+      }
+
+      setLoading(false);
     }
   }
 
