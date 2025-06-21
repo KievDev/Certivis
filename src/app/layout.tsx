@@ -19,6 +19,17 @@ export const metadata: Metadata = {
   title: "Certivis",
   description:
     "Somos uma plataforma para profissionais de saúde focada em agilizar seu atendimento de forma simplificada e organizada.",
+  robots: {
+    index: true,
+    follow: true,
+    nocache: true,
+  },
+  openGraph: {
+    title: "Certivis",
+    description:
+      "Somos uma plataforma para profissionais de saúde focada em agilizar seu atendimento de forma simplificada e organizada.",
+    images: [`${process.env.NEXT_PUBLIC_URL}/doctor-hero.png`],
+  },
 };
 
 export default function RootLayout({
