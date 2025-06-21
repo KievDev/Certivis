@@ -25,7 +25,7 @@ export function Header() {
 
   // Function to login
   async function handleLogin() {
-    await handleRegister("github");
+    await handleRegister("google | github");
   }
 
   // Function for the Sheet menu utilizing the array above
